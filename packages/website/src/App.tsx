@@ -6,11 +6,12 @@ import { Spinner } from "./components/Spinner";
 import useAvailableCurrencies from "./query/useAvailableCurrencies";
 import useConvertCurrency from "./query/useConvertCurrencies";
 
+type CurrencyValues = { base?: number; target?: number };
+
 export default function App() {
-  const [baseValue, setBaseValue] = useState<number>();
-  const [targetValue, setTargetValue] = useState<number>();
   const [baseCurrency, setBaseCurrency] = useState<string>();
   const [targetCurrency, setTargetCurrency] = useState<string>();
+  const [values, setValues] = useState<CurrencyValues>({});
 
   const { data: currencies = [] } = useAvailableCurrencies();
   const { mutate: convertCurrency, isPending } = useConvertCurrency();
@@ -24,47 +25,60 @@ export default function App() {
     [currencies]
   );
 
-  const resetValues = () => {
-    setBaseValue(undefined);
-    setTargetValue(undefined);
+  const handleSetBaseCurrency = (currency: string | undefined) => {
+    setBaseCurrency(currency);
+    if (targetCurrency && (values.base || values.target)) {
+      handleConvertCurrency(
+        values.base ? "base" : "target",
+        values.base ?? values.target
+      );
+    }
   };
 
-  const handleSetBaseValue = (newValue?: number) => {
-    if (!baseCurrency || !targetCurrency) {
-      return;
+  const handleSetTargetCurrency = (currency: string | undefined) => {
+    setTargetCurrency(currency);
+    if (baseCurrency && (values.base || values.target)) {
+      handleConvertCurrency(
+        values.base ? "base" : "target",
+        values.base ?? values.target
+      );
     }
-    if (newValue === undefined) {
-      resetValues();
-      return;
-    }
-    setBaseValue(newValue);
-    convertCurrency(
-      {
-        from: baseCurrency,
-        to: targetCurrency,
-        value: newValue,
-      },
-      { onSuccess: (convertedValue) => setTargetValue(convertedValue) }
-    );
   };
 
-  const handleSetTargetValue = (newValue?: number) => {
-    if (!baseCurrency || !targetCurrency) {
-      return;
+  const handleSetValue =
+    (convertedCurrency: keyof CurrencyValues) =>
+    (newValue: number | undefined) => {
+      // reset values
+      if (!newValue) {
+        setValues({});
+        return;
+      }
+      setValues({ [convertedCurrency]: newValue });
+      handleConvertCurrency(convertedCurrency, newValue);
+    };
+
+  const handleConvertCurrency = (
+    convertedCurrency: keyof CurrencyValues,
+    value: number = 0
+  ) => {
+    if (baseCurrency && targetCurrency) {
+      convertCurrency(
+        {
+          value,
+          from: convertedCurrency === "base" ? baseCurrency : targetCurrency,
+          to: convertedCurrency === "base" ? targetCurrency : baseCurrency,
+        },
+        {
+          onSuccess: (convertedValue) =>
+            setValues({
+              // set opposite currency to converted value:
+              [convertedCurrency]: value,
+              [convertedCurrency === "base" ? "target" : "base"]:
+                convertedValue,
+            }),
+        }
+      );
     }
-    if (newValue === undefined) {
-      resetValues();
-      return;
-    }
-    setTargetValue(newValue);
-    convertCurrency(
-      {
-        from: targetCurrency,
-        to: baseCurrency,
-        value: newValue,
-      },
-      { onSuccess: (convertedValue) => setBaseValue(convertedValue) }
-    );
   };
 
   return (
@@ -77,7 +91,7 @@ export default function App() {
           <div className="flex gap-4 items-center">
             <Select
               value={baseCurrency}
-              onChange={setBaseCurrency}
+              onChange={handleSetBaseCurrency}
               items={currencyOptions}
               className="w-1/2 max-w-[1/2]"
             >
@@ -85,8 +99,8 @@ export default function App() {
                 ?.name ?? "From"}
             </Select>
             <NumberInput
-              value={baseValue}
-              onSubmit={handleSetBaseValue}
+              value={values.base}
+              onSubmit={handleSetValue("base")}
               className="w-1/2"
               disabled={isPending}
             />
@@ -94,7 +108,7 @@ export default function App() {
           <div className="flex gap-4 items-center">
             <Select
               value={targetCurrency}
-              onChange={setTargetCurrency}
+              onChange={handleSetTargetCurrency}
               items={currencyOptions}
               className="w-1/2 max-w-[1/2]"
             >
@@ -102,13 +116,14 @@ export default function App() {
                 ?.name ?? "To"}
             </Select>
             <NumberInput
-              value={targetValue}
-              onSubmit={handleSetTargetValue}
+              value={values.target}
+              onSubmit={handleSetValue("target")}
               className="w-1/2"
               disabled={isPending}
             />
           </div>
         </div>
+        {/* Overlay */}
         {isPending && (
           <div className="bg-sky-200 opacity-20 flex absolute top-0 left-0 h-full w-full items-center justify-center">
             <Spinner />
