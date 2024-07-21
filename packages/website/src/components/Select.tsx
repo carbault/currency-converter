@@ -2,6 +2,7 @@ import * as Popover from "@radix-ui/react-popover";
 import React, { useMemo, useState } from "react";
 import { Button } from "./Button";
 import { ChevronIcon } from "./ChevronIcon";
+import { Spinner } from "./Spinner";
 import { TextInput } from "./TextInput";
 
 export function Select<T extends React.Key>(props: {
@@ -10,8 +11,9 @@ export function Select<T extends React.Key>(props: {
   items: { value: T; label: string }[];
   children: React.ReactNode;
   className?: string;
+  isLoading?: boolean;
 }) {
-  const { children, value, onChange, items, className } = props;
+  const { children, value, onChange, items, className, isLoading } = props;
 
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState<string>();
@@ -48,7 +50,8 @@ export function Select<T extends React.Key>(props: {
           onChange={setSearch}
           placeholder="Search..."
         />
-        <div className="flex flex-col overflow-y-auto">
+        <div className="flex flex-col overflow-y-auto min-h-20">
+          {!isLoading && <Spinner className="m-auto" />}
           {filteredItems.map(({ value, label }, index) => (
             <div
               key={index}

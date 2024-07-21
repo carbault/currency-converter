@@ -13,7 +13,7 @@ export default function App() {
   const [targetCurrency, setTargetCurrency] = useState<string>();
   const [values, setValues] = useState<CurrencyValues>({});
 
-  const { data: currencies = [] } = useAvailableCurrencies();
+  const { data: currencies = [], isLoading } = useAvailableCurrencies();
   const { mutate: convertCurrency, isPending } = useConvertCurrency();
 
   const currencyOptions = useMemo(
@@ -95,6 +95,7 @@ export default function App() {
               onChange={handleSetBaseCurrency}
               items={currencyOptions}
               className="w-1/2 max-w-[1/2]"
+              isLoading={isLoading}
             >
               {currencies.find((currency) => currency.code === baseCurrency)
                 ?.name ?? "From"}
@@ -112,6 +113,7 @@ export default function App() {
               onChange={handleSetTargetCurrency}
               items={currencyOptions}
               className="w-1/2 max-w-[1/2]"
+              isLoading={isLoading}
             >
               {currencies.find((currency) => currency.code === targetCurrency)
                 ?.name ?? "To"}

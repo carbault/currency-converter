@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React from "react";
 
 const Spinner = React.forwardRef<
@@ -11,7 +12,7 @@ const Spinner = React.forwardRef<
       width="50"
       height="50"
       viewBox="0 0 24 24"
-      className="animate-spin"
+      className={classNames(props.className, "animate-spin")}
       ref={ref}
     >
       <g>
