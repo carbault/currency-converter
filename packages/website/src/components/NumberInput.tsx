@@ -53,7 +53,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         onChange={handleChange}
-        ref={ref}
+        ref={inputRef ?? ref}
         style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
         className={classNames(
           className,
