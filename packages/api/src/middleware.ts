@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { z, ZodError, ZodIssue } from "zod";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "./errorCodes";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "./const/errorCodes";
 
 export function validateRequestBody(schema: z.ZodObject<any, any>) {
   return (req: Request, res: Response, next: NextFunction) => {

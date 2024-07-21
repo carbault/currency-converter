@@ -9,9 +9,9 @@ import axios from "axios";
 import cors from "cors";
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
-import { INTERNAL_SERVER_ERROR } from "./errorCodes";
+import { INTERNAL_SERVER_ERROR } from "./const/errorCodes";
+import { SUPPORTED_CURRENCIES } from "./const/supportedCurrencies";
 import { validateRequestBody, validateRequestParams } from "./middleware";
-import { SUPPORTED_CURRENCIES } from "./supportedCurrencies";
 
 dotenv.config();
 
