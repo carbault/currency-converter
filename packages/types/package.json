@@ -1,0 +1,20 @@
+{
+  "name": "@currency-converter/types",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "tsup": "^8.1.2",
+    "typescript": "^5.2.2",
+    "zod": "^3.23.8"
+  },
+  "scripts": {
+    "dev": "tsup src/index.ts index.js --format esm --watch && tsc --emitDeclarationOnly --declaration",
+    "build": "tsup src/index.ts index.js --format esm && tsc --emitDeclarationOnly --declaration",
+    "clean": "rm -rf .turbo node_modules dist tsconfig.tsbuildinfo",
+    "lint": "tsc"
+  },
+  "sideEffects": false
+}
