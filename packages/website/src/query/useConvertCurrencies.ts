@@ -8,13 +8,10 @@ export const BACKEND_URL =
 export default function useConvertCurrency() {
   return useMutation({
     mutationFn: async (params: ConversionParams) => {
-      console.log(params);
       const response = await fetch(`${BACKEND_URL}/convert`, {
         method: "POST",
         body: JSON.stringify(params),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       }).then((response) => responseOrError(response));
       const convertedValue: number = await response.json();
       return convertedValue;

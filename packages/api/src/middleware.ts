@@ -6,9 +6,7 @@ export function validateRequestBody(schema: z.ZodObject<any, any>) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       req.accepts("application/json");
-      console.log("body", req.body);
       schema.parse(req.body);
-      console.log("parsed with success");
       next();
     } catch (error) {
       handleSchemaError(res, error);
