@@ -71,10 +71,11 @@ export default function App() {
         {
           onSuccess: (convertedValue) =>
             setValues({
-              // set opposite currency to converted value:
               [convertedCurrency]: value,
-              [convertedCurrency === "base" ? "target" : "base"]:
-                convertedValue,
+              // set opposite currency to converted value, with a 2-digit precision
+              [convertedCurrency === "base" ? "target" : "base"]: Number(
+                convertedValue.toFixed(2)
+              ),
             }),
         }
       );
