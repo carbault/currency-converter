@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import { NumberInput } from "./components/NumberInput";
-import { Select } from "./components/Select";
 import { Spinner } from "./components/Spinner";
-import useAvailableCurrencies from "./query/useAvailableCurrencies";
+import CurrencySelect from "./CurrencySelect";
 import useConvertCurrency from "./query/useConvertCurrencies";
 
 type CurrencyValues = { base?: number; target?: number };
@@ -13,17 +12,7 @@ export default function App() {
   const [targetCurrency, setTargetCurrency] = useState<string>();
   const [values, setValues] = useState<CurrencyValues>({});
 
-  const { data: currencies = [], isLoading } = useAvailableCurrencies();
   const { mutate: convertCurrency, isPending } = useConvertCurrency();
-
-  const currencyOptions = useMemo(
-    () =>
-      currencies.map((currency) => ({
-        value: currency.code,
-        label: `${currency.name} (${currency.symbol ?? currency.code})`,
-      })),
-    [currencies]
-  );
 
   const handleSetBaseCurrency = (currency: string | undefined) => {
     setBaseCurrency(currency);
@@ -90,16 +79,11 @@ export default function App() {
         </h1>
         <div className="flex flex-col gap-4 w-full">
           <div className="flex gap-4 items-center">
-            <Select
+            <CurrencySelect
               value={baseCurrency}
               onChange={handleSetBaseCurrency}
-              items={currencyOptions}
-              className="w-1/2 max-w-[1/2]"
-              isLoading={isLoading}
-            >
-              {currencies.find((currency) => currency.code === baseCurrency)
-                ?.name ?? "From"}
-            </Select>
+              placeholder="From"
+            />
             <NumberInput
               value={values.base}
               onSubmit={handleSetValue("base")}
@@ -108,16 +92,11 @@ export default function App() {
             />
           </div>
           <div className="flex gap-4 items-center">
-            <Select
+            <CurrencySelect
               value={targetCurrency}
               onChange={handleSetTargetCurrency}
-              items={currencyOptions}
-              className="w-1/2 max-w-[1/2]"
-              isLoading={isLoading}
-            >
-              {currencies.find((currency) => currency.code === targetCurrency)
-                ?.name ?? "To"}
-            </Select>
+              placeholder="To"
+            />
             <NumberInput
               value={values.target}
               onSubmit={handleSetValue("target")}

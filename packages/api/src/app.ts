@@ -28,7 +28,7 @@ app.get(
   "/currencies",
   validateRequestParams(currenciesSchema),
   (request: Request<CurrenciesParams>, res: Response<Currency[]>) => {
-    const { type } = request.params;
+    const { type } = request.query;
     res.json(
       type
         ? SUPPORTED_CURRENCIES.filter((currency) => currency.type === type)

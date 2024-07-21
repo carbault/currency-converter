@@ -18,7 +18,7 @@ export function validateRequestParams(schema: z.ZodObject<any, any>) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       req.accepts("application/json");
-      schema.parse(req.params);
+      schema.parse(req.query);
       next();
     } catch (error) {
       handleSchemaError(res, error);

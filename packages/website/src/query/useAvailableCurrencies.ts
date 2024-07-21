@@ -9,12 +9,12 @@ export default function useAvailableCurrencies(type?: CurrencyType) {
   return useQuery({
     queryFn: async () => {
       const response = await fetch(
-        `${BACKEND_URL}/currencies${type ? `&type=${type}` : ""}`,
+        `${BACKEND_URL}/currencies${type ? `?type=${type}` : ""}`,
         { method: "GET" }
       ).then((response) => responseOrError(response));
       const currencies: Currency[] = await response.json();
       return currencies;
     },
-    queryKey: ["available-currencies", type],
+    queryKey: ["available-currencies", type] as const,
   });
 }

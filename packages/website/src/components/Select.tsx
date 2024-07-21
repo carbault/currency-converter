@@ -2,6 +2,7 @@ import * as Popover from "@radix-ui/react-popover";
 import React, { useMemo, useState } from "react";
 import { Button } from "./Button";
 import { ChevronIcon } from "./ChevronIcon";
+import { DropdownOption } from "./DropdownOption";
 import { Spinner } from "./Spinner";
 import { TextInput } from "./TextInput";
 
@@ -9,11 +10,13 @@ export function Select<T extends React.Key>(props: {
   value: T | undefined;
   onChange: (newValue: T | undefined) => void;
   items: { value: T; label: string }[];
-  children: React.ReactNode;
+  text: string;
+  children?: React.ReactNode;
   className?: string;
   isLoading?: boolean;
 }) {
-  const { children, value, onChange, items, className, isLoading } = props;
+  const { children, value, onChange, text, items, className, isLoading } =
+    props;
 
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState<string>();
@@ -37,7 +40,7 @@ export function Select<T extends React.Key>(props: {
     <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
         <Button className={className}>
-          {children}
+          {text}
           <ChevronIcon className="ml-auto min-w-4" />
         </Button>
       </Popover.Trigger>
@@ -50,17 +53,24 @@ export function Select<T extends React.Key>(props: {
           onChange={setSearch}
           placeholder="Search..."
         />
+
         <div className="flex flex-col overflow-y-auto min-h-20">
-          {!isLoading && <Spinner className="m-auto" />}
-          {filteredItems.map(({ value, label }, index) => (
-            <div
-              key={index}
-              onClick={handleSelectValue(value)}
-              className="flex flex-1 py-1 rounded hover:bg-sky-100 px-2 cursor-pointer"
-            >
-              {label}
-            </div>
-          ))}
+          {isLoading ? (
+            <Spinner className="m-auto" />
+          ) : (
+            <>
+              {children}
+              {filteredItems.map((item, index) => (
+                <DropdownOption
+                  key={index}
+                  onClick={handleSelectValue(item.value)}
+                  isSelected={item.value === value}
+                >
+                  {item.label}
+                </DropdownOption>
+              ))}
+            </>
+          )}
         </div>
       </Popover.Content>
     </Popover.Root>
