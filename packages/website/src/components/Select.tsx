@@ -13,10 +13,12 @@ export function Select<T extends React.Key>(props: {
 }) {
   const { children, value, onChange, items, className } = props;
 
+  const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState<string>();
 
   const handleSelectValue = (newValue: T) => () => {
     onChange(newValue === value ? undefined : newValue);
+    setIsOpen(false);
   };
 
   const filteredItems = useMemo(
@@ -30,7 +32,7 @@ export function Select<T extends React.Key>(props: {
   );
 
   return (
-    <Popover.Root>
+    <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
         <Button className={className}>
           {children}

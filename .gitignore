@@ -13,4 +13,4 @@ node_modules
 .turbo
 dist
 build
-tsconfig.buildinfo
+*.tsbuildinfo
